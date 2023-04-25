@@ -1,0 +1,24 @@
+.auth-container {
+  margin: auto;
+  width:100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-auth {
+  max-width: 330px;
+  padding: 15px;
+  text-align: center;
+}
+
+.form-auth .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-auth input {
+  margin-bottom: 15px;
+
+}
+
