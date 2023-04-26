@@ -1,13 +1,36 @@
-import React from "react";
+import React, { useState}  from "react";
 import logo from "../../assets/react.svg";
 import "./Auth.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
+const baseUrl = 'https://fastapi-blog.iran.liara.run'
 
 const Login = () => {
+  const [email,setEmail] = useState('')
+  const [password,setPassword] = useState('')
+
+  const loginRequest = (e) => {
+    e.preventDefault()
+    axios
+      .post(`${baseUrl}`+'/accounts/api/v1/user/login/', {
+        email: email,
+        password: password,
+      })
+      .then((response) => {
+        console.log(response);
+
+      })
+      .catch((err) =>{
+        console.log(err);
+    });
+  };
+
+
   return (
     <div className="auth-container">
       <main className="form-auth w-100 m-auto">
-        <form>
+        <form onSubmit={loginRequest}>
           <img className="mb-4" src={logo} alt="" width="100" height="100" />
           <h1 className="h3 mb-3 fw-normal">Login Form</h1>
 
@@ -15,8 +38,8 @@ const Login = () => {
             <input
               type="email"
               className="form-control"
-              id="floatingInput"
               placeholder="name@example.com"
+              onChange={(e) => setEmail(e.target.value)}
             />
             <label>Email address</label>
           </div>
@@ -24,8 +47,8 @@ const Login = () => {
             <input
               type="password"
               className="form-control"
-              id="floatingPassword"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
             />
             <label>Password</label>
           </div>
