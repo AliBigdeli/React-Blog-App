@@ -3,13 +3,15 @@ import logo from "../../assets/react.svg";
 import "./Auth.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import {useNavigate} from 'react-router-dom';
 
 const baseUrl = 'https://fastapi-blog.iran.liara.run'
 
 const Login = () => {
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
-
+  const navigate = useNavigate();
   const loginRequest = (e) => {
     e.preventDefault()
     axios
@@ -19,10 +21,13 @@ const Login = () => {
       })
       .then((response) => {
         console.log(response);
+        toast.success(`successfully logged in as ${response.data.email}`);
+        navigate('/')
 
       })
       .catch((err) =>{
         console.log(err);
+        toast.error(err.response.data.detail);
     });
   };
 
@@ -66,7 +71,9 @@ const Login = () => {
           </p>
         </form>
       </main>
+      
     </div>
+    
   );
 };
 

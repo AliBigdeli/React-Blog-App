@@ -4,7 +4,7 @@ import BlogList from "./pages/Blog/BlogList";
 import BlogDetail from "./pages/Blog/BlogDetail";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
-
+import { ToastContainer, toast } from 'react-toastify';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Page404 from "./pages/Errors/Page404";
 
@@ -24,6 +24,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      <ToastContainer />
     </main>
   );
 }
