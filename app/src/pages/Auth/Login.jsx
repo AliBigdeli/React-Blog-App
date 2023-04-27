@@ -1,36 +1,35 @@
-import React, { useState}  from "react";
+import React, { useState } from "react";
 import logo from "../../assets/react.svg";
 import "./Auth.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import {useNavigate} from 'react-router-dom';
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const baseUrl = 'https://fastapi-blog.iran.liara.run'
+const baseUrl = "https://fastapi-blog.iran.liara.run";
 
 const Login = () => {
-  const [email,setEmail] = useState('')
-  const [password,setPassword] = useState('')
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const loginRequest = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     axios
-      .post(`${baseUrl}`+'/accounts/api/v1/user/login/', {
+      .post(`${baseUrl}` + "/accounts/api/v1/user/login/", {
         email: email,
         password: password,
       })
       .then((response) => {
         console.log(response);
-        toast.success(`successfully logged in as ${response.data.email}`);
-        navigate('/')
-
+        response.data.email && toast.success(`successfully logged in as ${response.data.email}`);
+        navigate("/");
       })
-      .catch((err) =>{
+      .catch((err) => {
         console.log(err);
-        toast.error(err.response.data.detail);
-    });
+        err.response.data.detail && toast.error(err.response.data.detail);
+        err.response.data.details && toast.error(err.response.data.details);
+      });
   };
-
 
   return (
     <div className="auth-container">
@@ -71,9 +70,7 @@ const Login = () => {
           </p>
         </form>
       </main>
-      
     </div>
-    
   );
 };
 
