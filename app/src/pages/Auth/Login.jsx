@@ -12,6 +12,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
   const loginRequest = (e) => {
     e.preventDefault();
     axios
@@ -21,7 +22,8 @@ const Login = () => {
       })
       .then((response) => {
         console.log(response);
-        response.data.email && toast.success(`successfully logged in as ${response.data.email}`);
+        response.data.email &&
+          toast.success(`successfully logged in as ${response.data.email}`);
         navigate("/");
       })
       .catch((err) => {
