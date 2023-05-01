@@ -1,27 +1,53 @@
 import "./App.css";
-import Home from "./pages/Home/Home";
-import BlogList from "./pages/Blog/BlogList";
-import BlogDetail from "./pages/Blog/BlogDetail";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import { ToastContainer, toast } from 'react-toastify';
+import React, { lazy, Suspense } from "react";
+const Home = lazy(() => import("./pages/Home/Home"));
+const BlogList = lazy(() => import("./pages/Blog/BlogList"));
+const BlogDetail = lazy(() => import("./pages/Blog/BlogDetail"));
+const Login = lazy(() => import("./pages/Auth/Login"));
+const Register = lazy(() => import("./pages/Auth/Register"));
+const Page404 = lazy(() => import("./pages/Errors/Page404"));
+const PostMGMT = lazy(() => import("./pages/Blog/PostsManagement"));
+const PostsEdit = lazy(() => import("./pages/Blog/PostsEdit"));
+import { ToastContainer, toast } from "react-toastify";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Page404 from "./pages/Errors/Page404";
+import { useDispatch, useSelector } from "react-redux";
+import ReactLoading from "react-loading";
 
 function App() {
+  const isAuthenticated = useSelector((store) => store.auth.isAuthenticated);
+
   return (
     <main>
       <Router>
         <div>
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route exact path="/blogs" element={<BlogList />} />
-            <Route path="/blogs/:id" element={<BlogDetail />} />
-            <Route exact path="/login" element={<Login />} />
-            <Route exact path="/register" element={<Register />} />
-            <Route path="/page-404" element={<Page404 />} />
-            <Route path="*" element={<Page404 />} />
-          </Routes>
+          <Suspense
+            fallback={
+              <div className="centered-spinner">
+                <ReactLoading
+                  type="spin"
+                  color="gray"
+                  height={200}
+                  width={200}
+                />
+              </div>
+            }
+          >
+            <Routes>
+              <Route exact path="/" element={<Home />} />
+              <Route exact path="/blogs" element={<BlogList />} />
+              <Route path="/blogs/:id" element={<BlogDetail />} />
+              <Route exact path="/login" element={<Login />} />
+              <Route exact path="/register" element={<Register />} />
+              {isAuthenticated && (
+                <React.Fragment>
+                  <Route exact path="/posts-management" element={<PostMGMT />} />
+                  <Route exact path="/posts-management/:id" element={<PostsEdit />} />
+                </React.Fragment>
+              )}
+              <Route path="/page-404" element={<Page404 />} />
+              <Route path="*" element={<Page404 />} />
+            </Routes>
+          </Suspense>
         </div>
       </Router>
       <ToastContainer />

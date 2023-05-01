@@ -4,6 +4,12 @@ import Footer from "../../components/Footer/Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { getApiData } from "../../utils/api";
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString();
+}
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState(null);
@@ -13,27 +19,25 @@ const BlogList = () => {
   const [page, setPage] = useState(1);
   const [total_page, setTotalPage] = useState(1);
   const [total_items, setTotalItems] = useState(0);
-  const [page_size, setPageSize] = useState(5);
+  const [page_size, setPageSize] = useState(10);
 
-  const getData = () => {
-    axios
-      .get("https://fastapi-blog.iran.liara.run/blog/api/v1/post/", {
-        timeout: 5000,
-        params: {
-          search: search,
-          ordering: order,
-          page: page,
-          page_size: page_size,
-        },
-      })
+  const getData = async () => {
+    await getApiData("/blog/api/v1/user/post/", {
+      timeout: 5000,
+      params: {
+        search: search,
+        ordering: order,
+        page: page,
+        page_size: page_size,
+      },
+    })
       .then((response) => {
-        // console.log(response);
         setBlogs(response.data.results);
         setPage(response.data.page);
         setTotalPage(response.data.total_pages);
         setTotalItems(response.data.total_items);
       })
-      .catch((err) => console.log(err));
+      .catch((error) => console.log(error));
   };
   useEffect(() => {
     getData();
@@ -74,19 +78,48 @@ const BlogList = () => {
           </select>
         </div>
         <div className="row mb-2">
-          {blogs &&
-            blogs.map((blog) => (
-              <div className="col-md-12" key={blog.id}>
-                <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                  <div className="col p-4 d-flex flex-column position-static">
-                    <h3 className="mb-0">{blog.title}</h3>
-                    <Link to={`/blogs/${blog.id}`} className="stretched-link">
-                      Continue reading
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">CreatedDate</th>
+                <th scope="col">Published</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {blogs &&
+                blogs.map((blog) => (
+                  <tr key={blog.id}>
+                    <th scope="row">{blog.id}</th>
+                    <td>{blog.title}</td>
+                    <td>{formatDate(blog.created_at)}</td>
+                    <td>
+                      {blog.is_published ? (
+                        <i className="bi bi-check-square-fill text-success"></i>
+                      ) : (
+                        <i className="bi bi-slash-square-fill text-danger"></i>
+                      )}
+                    </td>
+                    <td>
+                      <Link className="btn" to={`/posts-management/${blog.id}`}>
+                        <i className="bi bi-pencil-square"></i>
+                      </Link>
+                      {blog.is_published ? (
+                        <Link to={`/blogs/${blog.id}`} className="btn">
+                          <i className="bi bi-eye text-primary"></i>
+                        </Link>
+                      ) : (
+                        <button className="btn" disabled>
+                          <i className="bi bi-eye-slash text-muted"></i>
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
         </div>
         <div className="d-flex justify-content-center">
           <nav aria-label="Page navigation">
@@ -141,7 +174,7 @@ const BlogList = () => {
                     className="page-link"
                     onClick={() => setPage(total_page)}
                   >
-                  last
+                    last
                   </button>
                 </li>
               )}

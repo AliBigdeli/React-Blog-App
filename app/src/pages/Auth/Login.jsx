@@ -2,35 +2,50 @@ import React, { useState } from "react";
 import logo from "../../assets/react.svg";
 import "./Auth.css";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {login} from "../../redux/features/authSlice";
+import {api} from "../../utils/api";
 
-const baseUrl = "https://fastapi-blog.iran.liara.run";
+const authService = {
+
+  login: async (email, password) => {
+    const response = await api.post("/accounts/api/v1/user/login/", {
+      email: email,
+      password: password,
+    });
+    return response;
+  },
+};
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const loginRequest = (e) => {
+  const loginRequest = async (e) => {
     e.preventDefault();
-    axios
-      .post(`${baseUrl}` + "/accounts/api/v1/user/login/", {
-        email: email,
-        password: password,
-      })
-      .then((response) => {
-        console.log(response);
-        response.data.email &&
-          toast.success(`successfully logged in as ${response.data.email}`);
-        navigate("/");
-      })
-      .catch((err) => {
-        console.log(err);
-        err.response.data.detail && toast.error(err.response.data.detail);
-        err.response.data.details && toast.error(err.response.data.details);
-      });
+    try {
+      const response = await authService.login(email, password);
+      response.data &&
+        dispatch(
+          login({
+            user_id: response.data.user_id,
+            access_token: response.data.access_token,
+            refresh_token: response.data.refresh_token,
+            email: email,
+          })
+        );
+      response.data?.email &&
+        toast.success(`successfully logged in as ${response.data.email}`);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      error.response.data?.detail && toast.error(error.response.data.detail);
+      error.response.data?.details && toast.error(error.response.data.details);
+    }
   };
 
   return (

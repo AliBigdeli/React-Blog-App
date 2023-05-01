@@ -12,14 +12,16 @@
   - [Install Vite and Setup project](#install-vite-and-setup-project)
   - [Start the app](#start-the-app)
 - [Project Layout](#project-layout)
-  - [components](#components)
+  - [components-layout](#components-layout)
     - [simple components](#simple-components)
     - [api components](#api-components)
     - [hooks components](#hooks-components)
     - [validation components](#validation-components)
     - [messages components](#messages-components)
-  - [Pages](#pages)
-  - [Routes](#routes)
+  - [Pages-layout](#pages-layout)
+  - [Routes-layout](#routes-layout)
+  - [Redux-layout](#redux-layout)
+- [Redux](#redux)
 
 # Setup Project
 
@@ -78,7 +80,7 @@ after successful run you can see the page in the following address:
 # Project Layout
 for a react app project layout in general should be like this:
 
-## components
+## components-layout
 each component that you are willing to create should be stored in ```src/components``` directory. each component may be coming with a **.jsx** and **.css** file.
 
 ### simple components
@@ -143,8 +145,116 @@ src
       
 ```
 
-## Pages
+## Pages-layout
 every app needs to have multiple pages and general info and schema of it this is where you keep them, and stor in the ```src/pages``` directory.
 
-## Routes
+## Routes-layout
 for switching between pages you need to have routes, so all the routes will be stored and define in this directory, which will be as ```src/routes```.
+
+
+## Redux-layout
+```
+src
+  - redux
+    - features
+      - AuthSlice.jsx
+    store.js
+      
+```
+
+
+# Redux
+Redux is a state management library for JavaScript applications that helps manage complex application states by providing a predictable and centralized way to manage state changes. Redux works by maintaining a single source of truth, called the store, which holds the state of the application. Components can interact with the store by dispatching actions, which are plain JavaScript objects that describe state changes. Redux then uses reducers, pure functions that take the current state and an action and return a new state, to update the store. Through this process, Redux makes it easy to manage and debug state changes across an application, making it a popular choice for building large-scale JavaScript applications.
+
+in order to use redux in your project you need to install it first,so install the base component of redux for react, then install the toolkit:
+
+```bash
+npm install react-redux @reduxjs/toolkit
+```
+
+after installation is complete you need to create a ```store.js``` file in the redux directory which contains following scripts at the start, but eventually with each slice you create you need to add it to the list of reducers.
+```jsx
+import { configureStore } from "@reduxjs/toolkit";
+import counterSlice from './features/counterSlice'
+export const store = configureStore({
+  reducer: {
+    counter:counterSlice
+  },
+});
+```
+
+at this point you are going to need a provider for the application which will contain the app component inside of it, so open up the main.jsx and update the file like the provided example:
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import { store } from "./redux/store.jsx";
+import { Provider } from "react-redux";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);
+
+```
+
+now for declaring any kind of slice just create a file inside ```redux/features/counterSlice.jsx``` and give it the following blueprint:
+
+```jsx
+// counterSlice.jsx
+
+
+import { createSlice } from "@reduxjs/toolkit";
+
+const counterSlice = createSlice({
+  name: "counter",
+  initialState: {
+    counter: 0,
+  },
+  reducers: {
+    increment: (state, action) => {
+     state.counter +=1;
+    },
+    decrement: (state) => {
+      state.counter -=1;
+
+    },
+    assign: (state,action) => {
+      state.counter = action.payload.counter
+    },
+  },
+});
+
+export const { increment, decrement,assign } = counterSlice.actions;
+
+export default counterSlice.reducer;
+
+```
+almost done now in order to fetch the current value of counter you need to use the following code in components:
+
+```jsx 
+import { useSelector } from "react-redux";
+const counter = useSelector((store) => store.auth.counter);
+```
+and for using the reducers you cna use the following samples:
+
+```jsx
+import { useDispatch } from "react-redux";
+import {increment,decrement,assign} from "../../redux/features/counterSlice";
+
+const dispatch = useDispatch();
+
+
+...
+dispatch(increment) // will add a number to the current value
+dispatch(decrement) // will minus one a number to the current value
+dispatch(assign({
+  counter:2
+})) // will assign value 2 to the counter
+
+...
+```
