@@ -5,13 +5,11 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate,Link } from "react-router-dom";
-import { getApiData, putApiData } from "../../utils/api";
+import { postApiData } from "../../utils/api";
 import { toast } from "react-toastify";
 
-const PostsEdit = () => {
-  const { id } = useParams();
+const PostsCreate = () => {
   const navigate = useNavigate();
-  const [postData, setPostData] = useState(null);
 
   const [postFormData, setPostFormData] = useState({
     title: "",
@@ -19,41 +17,16 @@ const PostsEdit = () => {
     is_published: false,
   });
 
-  const getData = () => {
-    getApiData(`/blog/api/v1/user/post/${id}/`, {
-      timeout: 5000,
-    })
-      .then((response) => {
-        // setPostFormData(response.data);
-        setPostFormData({
-          ...postFormData,
-          title: response.data.title,
-          content: response.data.content,
-          is_published: response.data.is_published,
-        });
-        setPostData(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.response.status == 404) {
-          navigate("/page-404");
-        }
-      });
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await putApiData(
-      `/blog/api/v1/user/post/${postData.id}/`,
+    const response = await postApiData(
+      `/blog/api/v1/user/post/`,
       JSON.stringify(postFormData)
     );
     console.log(response);
-    if (response.status == 202) {
-      toast.success("post has been updated successfully");
+    if (response.status == 201) {
+      toast.success("post has been created successfully");
       navigate("/posts-management")
     } else {
       response.data.detail &&
@@ -68,7 +41,7 @@ const PostsEdit = () => {
       <Header />
       <div className="container">
         <>
-          <h1 className="text-center">Edit Post {postData && postData.id} </h1>
+          <h1 className="text-center">Create Post </h1>
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
@@ -102,7 +75,7 @@ const PostsEdit = () => {
                 className="form-check-input"
                 id="is_published"
                 name="is_published"
-                checked={postFormData.is_published}
+            
                 onChange={(e) =>
                   setPostFormData({
                     ...postFormData,
@@ -128,4 +101,4 @@ const PostsEdit = () => {
   );
 };
 
-export default PostsEdit;
+export default PostsCreate;

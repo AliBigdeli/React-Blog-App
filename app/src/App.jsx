@@ -8,6 +8,7 @@ const Register = lazy(() => import("./pages/Auth/Register"));
 const Page404 = lazy(() => import("./pages/Errors/Page404"));
 const PostMGMT = lazy(() => import("./pages/Blog/PostsManagement"));
 const PostsEdit = lazy(() => import("./pages/Blog/PostsEdit"));
+const PostsCreate = lazy(() => import("./pages/Blog/PostsCreate"));
 import { ToastContainer, toast } from "react-toastify";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,6 +43,7 @@ function App() {
                 <React.Fragment>
                   <Route exact path="/posts-management" element={<PostMGMT />} />
                   <Route exact path="/posts-management/:id" element={<PostsEdit />} />
+                  <Route exact path="/posts-management/create" element={<PostsCreate />} />
                 </React.Fragment>
               )}
               <Route path="/page-404" element={<Page404 />} />

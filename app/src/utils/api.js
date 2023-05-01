@@ -47,6 +47,19 @@ export const putApiData = async (url, data) => {
     }
   }
 };
+// function to make POST requests using the api object
+export const deleteApiData = async (url) => {
+  setAuthToken();
+  try {
+    const response = await api.delete(url);
+    return response;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      unsetAuthToken();
+      console.log(error);
+    }
+  }
+};
 
 // function to check local storage for authentication and add access token to header
 export const setAuthToken = () => {

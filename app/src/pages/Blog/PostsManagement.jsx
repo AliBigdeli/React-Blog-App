@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { getApiData } from "../../utils/api";
-
+import RemoveModal from "../../components/Blog/RemoveModal";
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleString();
@@ -55,7 +55,7 @@ const BlogList = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
           <select
-            className="form-select w-25"
+            className="form-select mw-100"
             onChange={(e) => setOrder(e.target.value)}
           >
             <option defaultValue value="">
@@ -65,7 +65,7 @@ const BlogList = () => {
             <option value="-id">ID Descending</option>
           </select>
           <select
-            className="form-select w-25"
+            className="form-select mw-100"
             onChange={(e) => setPageSize(e.target.value)}
           >
             <option defaultValue value="5">
@@ -76,6 +76,12 @@ const BlogList = () => {
             <option value="20">20</option>
             <option value="30">30</option>
           </select>
+          <Link
+            className="btn btn-outline-secondary mw-100"
+            to="/posts-management/create"
+          >
+            Create
+          </Link>
         </div>
         <div className="row mb-2">
           <table className="table table-striped">
@@ -107,7 +113,11 @@ const BlogList = () => {
                         <i className="bi bi-pencil-square"></i>
                       </Link>
                       {blog.is_published ? (
-                        <Link to={`/blogs/${blog.id}`} className="btn">
+                        <Link
+                          to={`/blogs/${blog.id}`}
+                          className="btn"
+                          target={"_blank"}
+                        >
                           <i className="bi bi-eye text-primary"></i>
                         </Link>
                       ) : (
@@ -115,6 +125,7 @@ const BlogList = () => {
                           <i className="bi bi-eye-slash text-muted"></i>
                         </button>
                       )}
+                      <RemoveModal blog={blog} getData={getData} />
                     </td>
                   </tr>
                 ))}

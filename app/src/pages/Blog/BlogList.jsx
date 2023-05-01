@@ -51,7 +51,7 @@ const BlogList = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
           <select
-            className="form-select w-25"
+            className="form-select mw-100"
             onChange={(e) => setOrder(e.target.value)}
           >
             <option defaultValue value="">
@@ -61,7 +61,7 @@ const BlogList = () => {
             <option value="-id">ID Descending</option>
           </select>
           <select
-            className="form-select w-25"
+            className="form-select mw-100"
             onChange={(e) => setPageSize(e.target.value)}
           >
             <option defaultValue value="5">
@@ -141,7 +141,7 @@ const BlogList = () => {
                     className="page-link"
                     onClick={() => setPage(total_page)}
                   >
-                  last
+                    last
                   </button>
                 </li>
               )}
