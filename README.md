@@ -22,6 +22,7 @@
   - [Routes-layout](#routes-layout)
   - [Redux-layout](#redux-layout)
 - [Redux](#redux)
+- [React-Query](#react-query)
 
 # Setup Project
 
@@ -257,4 +258,38 @@ dispatch(assign({
 })) // will assign value 2 to the counter
 
 ...
+```
+
+# React-Query
+React Query is a popular JavaScript library for managing server state in React applications. It provides a simple and easy-to-use API for fetching, caching, and updating data from backend APIs. React Query is designed to simplify the process of managing server state in React applications, making it easier to build fast and responsive user interfaces.
+
+in order to use react-query first of all you need to install it, you cna simply do it by using the provided command:
+
+```bash
+npm install @tanstack/react-query
+
+# for react query dev tools install
+npm install @tanstack/react-query-devtools
+```
+
+at this point you are going to need a provider for the application which will contain the app component inside of it, so open up the main.jsx and update the file like the provided example:
+
+```jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import { QueryClient,QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient()
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}> 
+      <App />
+      <ReactQueryDevtools/>
+    </QueryClientProvider>
+  </React.StrictMode>
+);
+
 ```
