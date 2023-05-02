@@ -22,14 +22,19 @@ const BlogList = () => {
   const [page_size, setPageSize] = useState(10);
 
   const getData = async () => {
+    let params = {
+      ordering: order,
+      page: page,
+      page_size: page_size,
+    };
+  
+    if (search) {
+      params.search = search;
+      params.page = 1;
+    }
     await getApiData("/blog/api/v1/user/post/", {
       timeout: 5000,
-      params: {
-        search: search,
-        ordering: order,
-        page: page,
-        page_size: page_size,
-      },
+      params: params,
     })
       .then((response) => {
         setBlogs(response.data.results);

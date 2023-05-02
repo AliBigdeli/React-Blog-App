@@ -16,15 +16,21 @@ const BlogList = () => {
   const [page_size, setPageSize] = useState(5);
 
   const getData = () => {
+    let params = {
+      ordering: order,
+      page: page,
+      page_size: page_size,
+    };
+  
+    if (search) {
+      params.search = search;
+      params.page = 1;
+    }
+
     axios
       .get("https://fastapi-blog.iran.liara.run/blog/api/v1/post/", {
         timeout: 5000,
-        params: {
-          search: search,
-          ordering: order,
-          page: page,
-          page_size: page_size,
-        },
+        params: params
       })
       .then((response) => {
         // console.log(response);
@@ -37,7 +43,7 @@ const BlogList = () => {
   };
   useEffect(() => {
     getData();
-  }, [search, order, page, page_size]);
+  }, [search,order, page, page_size]);
 
   return (
     <>
