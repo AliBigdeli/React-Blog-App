@@ -4,6 +4,8 @@ import Footer from "../../components/Footer/Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getApiData } from "../../utils/api";
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState(null);
@@ -15,36 +17,38 @@ const BlogList = () => {
   const [total_items, setTotalItems] = useState(0);
   const [page_size, setPageSize] = useState(5);
 
-  const getData = () => {
-    let params = {
-      ordering: order,
-      page: page,
-      page_size: page_size,
-    };
-  
-    if (search) {
-      params.search = search;
-      params.page = 1;
-    }
+  const postsQuery = useQuery({
+    queryKey: ["posts", page, page_size, order, search],
+    queryFn: async () => {
+      let params = {
+        ordering: order,
+        page: page,
+        page_size: page_size,
+      };
 
-    axios
-      .get("https://fastapi-blog.iran.liara.run/blog/api/v1/post/", {
-        timeout: 5000,
-        params: params
-      })
-      .then((response) => {
-        // console.log(response);
-        setBlogs(response.data.results);
-        setPage(response.data.page);
-        setTotalPage(response.data.total_pages);
-        setTotalItems(response.data.total_items);
-      })
-      .catch((err) => console.log(err));
-  };
-  useEffect(() => {
-    getData();
-  }, [search,order, page, page_size]);
+      if (search) {
+        params.search = search;
+        params.page = 1;
+      }
 
+      const response = await axios.get(
+        "https://fastapi-blog.iran.liara.run/blog/api/v1/post/",
+        {
+          timeout: 5000,
+          params: params,
+        }
+      );
+      const { total_items, total_pages } = response.data;
+      setTotalItems(total_items);
+      setTotalPage(total_pages);
+
+      return response;
+    },
+  });
+  // if (postsQuery.isLoading) return <h1>loading</h1>;
+  // if (postsQuery.isError) return <h1>error</h1>;
+
+  // console.log(postsQuery.data.data)
   return (
     <>
       <Header />
@@ -80,8 +84,10 @@ const BlogList = () => {
           </select>
         </div>
         <div className="row mb-2">
-          {blogs &&
-            blogs.map((blog) => (
+          {postsQuery.isLoading && <h5>loading...</h5>}
+          {postsQuery.isSuccess &&
+            postsQuery.data.data &&
+            postsQuery.data.data.results.map((blog) => (
               <div className="col-md-12" key={blog.id}>
                 <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                   <div className="col p-4 d-flex flex-column position-static">
