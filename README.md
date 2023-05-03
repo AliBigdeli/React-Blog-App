@@ -254,7 +254,7 @@ const dispatch = useDispatch();
 dispatch(increment()) // will add a number to the current value
 dispatch(decrement()) // will minus one a number to the current value
 dispatch(assign({
-  counter:2
+  value:2
 })) // will assign value 2 to the counter
 
 ...
