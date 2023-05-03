@@ -189,8 +189,8 @@ at this point you are going to need a provider for the application which will co
 ```jsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import { store } from "./redux/store.jsx";
+import App from "./App";
+import { store } from "./redux/store";
 import { Provider } from "react-redux";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -214,18 +214,18 @@ import { createSlice } from "@reduxjs/toolkit";
 const counterSlice = createSlice({
   name: "counter",
   initialState: {
-    counter: 0,
+    value: 0,
   },
   reducers: {
-    increment: (state, action) => {
-     state.counter +=1;
+    increment: (state) => {
+     state.value +=1;
     },
     decrement: (state) => {
-      state.counter -=1;
+      state.value -=1;
 
     },
     assign: (state,action) => {
-      state.counter = action.payload.counter
+      state.value = action.payload.value
     },
   },
 });
@@ -239,7 +239,7 @@ almost done now in order to fetch the current value of counter you need to use t
 
 ```jsx 
 import { useSelector } from "react-redux";
-const counter = useSelector((store) => store.auth.counter);
+const counter = useSelector((store) => store.counter.value);
 ```
 and for using the reducers you cna use the following samples:
 
