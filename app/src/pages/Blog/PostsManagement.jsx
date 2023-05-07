@@ -2,10 +2,10 @@ import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { getApiData } from "../../utils/api";
 import RemoveModal from "../../components/Blog/RemoveModal";
+
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleString();
@@ -27,7 +27,7 @@ const BlogList = () => {
       page: page,
       page_size: page_size,
     };
-  
+
     if (search) {
       params.search = search;
       params.page = 1;

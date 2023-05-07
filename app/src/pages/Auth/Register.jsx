@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import logo from "../../assets/react.svg";
 import "./Auth.css";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
-const baseUrl = "https://fastapi-blog.iran.liara.run";
+import { api } from "../../utils/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -17,8 +15,8 @@ const Register = () => {
 
   const registerRequest = (e) => {
     e.preventDefault();
-    axios
-      .post(`${baseUrl}` + "/accounts/api/v1/user/register/", {
+    api
+      .post("/accounts/api/v1/user/register/", {
         email: email,
         password: password,
         password1: password1,
