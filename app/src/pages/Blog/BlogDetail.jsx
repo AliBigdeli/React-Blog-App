@@ -2,35 +2,39 @@ import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getApiData } from "../../utils/api";
 
 const BlogDetail = () => {
   const { id } = useParams();
-  const [blog, setBlog] = useState(null);
   const navigate = useNavigate();
 
-  const postQuery = useQuery({
-    queryKey: ["post"],
+  const { isLoading, isError, data, error, refetch } = useQuery({
+    queryKey: ["post", id],
     queryFn: async () => {
       const response = await getApiData(`/blog/api/v1/post/${id}/`);
-      if (response.data) setBlog(response.data);
       return response;
     },
+    retry: false,
+    onError: (error) => {
+      console.log("test");
+      if (error.response?.status === 404 || error.response?.status === 422) {
+        navigate("/page-404");
+        return false;
+      }
+    },
   });
-  // if (postQuery.isError && postQuery.error.response.status === 404)
-  //   navigate("/page-404");
   return (
     <>
       <Header />
-      {postQuery.isLoading && <h1>loading</h1>}
+      {isLoading && <h1>loading</h1>}
+      {/* {isError && <h1>{error.message}</h1>} */}
 
-      {blog && (
+      {data && (
         <div className="container">
-          <h1>{blog.title}</h1>
-          <p>{blog.content}</p>
+          <h1>{data.data.title}</h1>
+          <p>{data.data.content}</p>
         </div>
       )}
       <Footer />

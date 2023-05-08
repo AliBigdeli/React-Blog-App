@@ -1,24 +1,29 @@
 import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getApiData } from "../../utils/api";
+import Pagination from "../../components/Blog/Pagination";
 
 const BlogList = () => {
-  const [blogs, setBlogs] = useState(null);
   const [search, setSearch] = useState("");
   const [order, setOrder] = useState("");
 
   const [page, setPage] = useState(1);
-  const [total_page, setTotalPage] = useState(1);
+  const [total_pages, setTotalPages] = useState(1);
   const [total_items, setTotalItems] = useState(0);
   const [page_size, setPageSize] = useState(5);
 
-  const postsQuery = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    data,
+  } = useQuery({
     queryKey: ["posts", page, page_size, order, search],
+    keepPreviousData : true,
     queryFn: async () => {
       let params = {
         ordering: order,
@@ -31,24 +36,18 @@ const BlogList = () => {
         params.page = 1;
       }
 
-      const response = await axios.get(
-        "https://fastapi-blog.iran.liara.run/blog/api/v1/post/",
-        {
-          timeout: 5000,
-          params: params,
-        }
-      );
+      const response = await getApiData("/blog/api/v1/post/", {
+        timeout: 5000,
+        params: params,
+      });
       const { total_items, total_pages } = response.data;
       setTotalItems(total_items);
-      setTotalPage(total_pages);
+      setTotalPages(total_pages);
 
       return response;
     },
   });
-  // if (postsQuery.isLoading) return <h1>loading</h1>;
-  // if (postsQuery.isError) return <h1>error</h1>;
 
-  // console.log(postsQuery.data.data)
   return (
     <>
       <Header />
@@ -84,10 +83,10 @@ const BlogList = () => {
           </select>
         </div>
         <div className="row mb-2">
-          {postsQuery.isLoading && <h5>loading...</h5>}
-          {postsQuery.isSuccess &&
-            postsQuery.data.data &&
-            postsQuery.data.data.results.map((blog) => (
+          {isLoading && <h5>loading...</h5>}
+          {isError && <h5>{error.message}</h5>}
+          {data &&
+            data.data.results.map((blog) => (
               <div className="col-md-12" key={blog.id}>
                 <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                   <div className="col p-4 d-flex flex-column position-static">
@@ -100,69 +99,12 @@ const BlogList = () => {
               </div>
             ))}
         </div>
-        <div className="d-flex justify-content-center">
-          <nav aria-label="Page navigation">
-            <ul className="pagination">
-              {total_page > 1 && page - 1 != 0 && (
-                <li className="page-item">
-                  <button className="page-link" onClick={() => setPage(1)}>
-                    first
-                  </button>
-                </li>
-              )}
-              {total_page > 1 && page - 1 != 0 && (
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setPage(page - 1)}
-                  >
-                    <i className="bi bi-arrow-left"></i>
-                  </button>
-                </li>
-              )}
-
-              {total_page &&
-                [...Array(total_page).keys()].map((i) => (
-                  <li
-                    className={
-                      i + 1 == page ? " page-item active" : "page-item"
-                    }
-                    key={i + 1}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => setPage(i + 1)}
-                    >
-                      {i + 1}
-                    </button>
-                  </li>
-                ))}
-              {total_page > 1 && page < total_page && (
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setPage(page + 1)}
-                  >
-                    <i className="bi bi-arrow-right"></i>
-                  </button>
-                </li>
-              )}
-              {total_page > 1 && page < total_page && (
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setPage(total_page)}
-                  >
-                    last
-                  </button>
-                </li>
-              )}
-            </ul>
-            <div className="d-flex justify-content-center align-items-center text-center">
-              total items : {total_items}
-            </div>
-          </nav>
-        </div>
+        <Pagination
+          page={page}
+          total_pages={total_pages}
+          total_items={total_items}
+          setPage={setPage}
+        />
       </div>
       <Footer />
     </>

@@ -1,10 +1,12 @@
 import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getApiData } from "../../utils/api";
 import RemoveModal from "../../components/Blog/RemoveModal";
+import Pagination from "../../components/Blog/Pagination";
+import { useQuery } from "@tanstack/react-query";
 
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -12,41 +14,40 @@ function formatDate(dateString) {
 }
 
 const BlogList = () => {
-  const [blogs, setBlogs] = useState(null);
   const [search, setSearch] = useState("");
   const [order, setOrder] = useState("");
 
   const [page, setPage] = useState(1);
-  const [total_page, setTotalPage] = useState(1);
+  const [total_pages, setTotalPages] = useState(1);
   const [total_items, setTotalItems] = useState(0);
   const [page_size, setPageSize] = useState(10);
 
-  const getData = async () => {
-    let params = {
-      ordering: order,
-      page: page,
-      page_size: page_size,
-    };
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["posts", page, page_size, order, search],
+    keepPreviousData: true,
+    queryFn: async () => {
+      let params = {
+        ordering: order,
+        page: page,
+        page_size: page_size,
+      };
 
-    if (search) {
-      params.search = search;
-      params.page = 1;
-    }
-    await getApiData("/blog/api/v1/user/post/", {
-      timeout: 5000,
-      params: params,
-    })
-      .then((response) => {
-        setBlogs(response.data.results);
-        setPage(response.data.page);
-        setTotalPage(response.data.total_pages);
-        setTotalItems(response.data.total_items);
-      })
-      .catch((error) => console.log(error));
-  };
-  useEffect(() => {
-    getData();
-  }, [search, order, page, page_size]);
+      if (search) {
+        params.search = search;
+        params.page = 1;
+      }
+
+      const response = await getApiData("/blog/api/v1/user/post/", {
+        timeout: 5000,
+        params: params,
+      });
+      const { total_items, total_pages } = response.data;
+      setTotalItems(total_items);
+      setTotalPages(total_pages);
+
+      return response;
+    },
+  });
 
   return (
     <>
@@ -89,6 +90,8 @@ const BlogList = () => {
           </Link>
         </div>
         <div className="row mb-2">
+          {isLoading && <h5>loading...</h5>}
+          {isError && <h5>{error.message}</h5>}
           <table className="table table-striped">
             <thead>
               <tr>
@@ -100,8 +103,8 @@ const BlogList = () => {
               </tr>
             </thead>
             <tbody>
-              {blogs &&
-                blogs.map((blog) => (
+              {data &&
+                data.data.results.map((blog) => (
                   <tr key={blog.id}>
                     <th scope="row">{blog.id}</th>
                     <td>{blog.title}</td>
@@ -130,76 +133,19 @@ const BlogList = () => {
                           <i className="bi bi-eye-slash text-muted"></i>
                         </button>
                       )}
-                      <RemoveModal blog={blog} getData={getData} />
+                      <RemoveModal blog={blog} />
                     </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
-        <div className="d-flex justify-content-center">
-          <nav aria-label="Page navigation">
-            <ul className="pagination">
-              {total_page > 1 && page - 1 != 0 && (
-                <li className="page-item">
-                  <button className="page-link" onClick={() => setPage(1)}>
-                    first
-                  </button>
-                </li>
-              )}
-              {total_page > 1 && page - 1 != 0 && (
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setPage(page - 1)}
-                  >
-                    <i className="bi bi-arrow-left"></i>
-                  </button>
-                </li>
-              )}
-
-              {total_page &&
-                [...Array(total_page).keys()].map((i) => (
-                  <li
-                    className={
-                      i + 1 == page ? " page-item active" : "page-item"
-                    }
-                    key={i + 1}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => setPage(i + 1)}
-                    >
-                      {i + 1}
-                    </button>
-                  </li>
-                ))}
-              {total_page > 1 && page < total_page && (
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setPage(page + 1)}
-                  >
-                    <i className="bi bi-arrow-right"></i>
-                  </button>
-                </li>
-              )}
-              {total_page > 1 && page < total_page && (
-                <li className="page-item">
-                  <button
-                    className="page-link"
-                    onClick={() => setPage(total_page)}
-                  >
-                    last
-                  </button>
-                </li>
-              )}
-            </ul>
-            <div className="d-flex justify-content-center align-items-center text-center">
-              total items : {total_items}
-            </div>
-          </nav>
-        </div>
+        <Pagination
+          page={page}
+          total_pages={total_pages}
+          total_items={total_items}
+          setPage={setPage}
+        />
       </div>
       <Footer />
     </>

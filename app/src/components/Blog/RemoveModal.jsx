@@ -3,25 +3,26 @@ import { useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { deleteApiData } from "../../utils/api";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const RemoveModal = (props) => {
   const [showModal, setShowModal] = useState(false);
+  const queryClient = useQueryClient();
 
-  const requestDelete = async () => {
-    console.log(props.blog.id);
-    const response = await deleteApiData(
-      `/blog/api/v1/user/post/${props.blog.id}/`
-    );
-    if (response.status == 204) {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      await deleteApiData(`/blog/api/v1/user/post/${props.blog.id}/`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       setShowModal(false);
       toast.success(`post id ${props.blog.id} has removed successfully`);
-      props.getData()
-    } else {
+    },
+    onError: (error) => {
       setShowModal(false);
-      response.data.detail && toast.error(`post id ${props.blog.id} removal failed, due to ${response.data.detail}`);
-      response.data.details && toast.error(`post id ${props.blog.id} removal failed, due to ${response.data.details}`);
-    }
-  };
+      toast.error(`something went wrong, ${error.message}`);
+    },
+  });
 
   //   console.log(blog);
   return (
@@ -46,8 +47,9 @@ const RemoveModal = (props) => {
           </Button>
           <Button
             variant="danger"
-            onClick={() => {
-              requestDelete();
+            onClick={(e) => {
+              e.preventDefault();
+              mutation.mutate({})
             }}
           >
             Remove Item

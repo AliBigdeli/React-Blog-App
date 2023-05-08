@@ -40,11 +40,11 @@ function App() {
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/register" element={<Register />} />
               {isAuthenticated && (
-                <React.Fragment>
+                <>
                   <Route exact path="/posts-management" element={<PostMGMT />} />
                   <Route exact path="/posts-management/:id" element={<PostsEdit />} />
                   <Route exact path="/posts-management/create" element={<PostsCreate />} />
-                </React.Fragment>
+                </>
               )}
               <Route path="/page-404" element={<Page404 />} />
               <Route path="*" element={<Page404 />} />

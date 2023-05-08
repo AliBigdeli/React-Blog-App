@@ -2,66 +2,64 @@ import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate,Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { getApiData, putApiData } from "../../utils/api";
 import { toast } from "react-toastify";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const PostsEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [postData, setPostData] = useState(null);
-
   const [postFormData, setPostFormData] = useState({
     title: "",
     content: "",
     is_published: false,
   });
 
-  const getData = () => {
-    getApiData(`/blog/api/v1/user/post/${id}/`, {
-      timeout: 5000,
-    })
-      .then((response) => {
-        // setPostFormData(response.data);
-        setPostFormData({
-          ...postFormData,
-          title: response.data.title,
-          content: response.data.content,
-          is_published: response.data.is_published,
-        });
-        setPostData(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.response.status == 404) {
-          navigate("/page-404");
-        }
+  const { isLoading, isError, data, error, refetch } = useQuery({
+    queryKey: ["post", id],
+    queryFn: async () => {
+      const response = await getApiData(`/blog/api/v1/user/post/${id}/`);
+      return response;
+    },
+    retry: false,
+    onError: (error) => {
+      console.log("test");
+      if (error.response?.status === 404 || error.response?.status === 422) {
+        navigate("/page-404");
+        return false;
+      }
+    },
+    onSuccess: (data) => {
+      setPostFormData({
+        ...postFormData,
+        title: data.data.title,
+        content: data.data.content,
+        is_published: data.data.is_published,
       });
-  };
+      setPostData(data.data);
+    },
+  });
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await putApiData(
-      `/blog/api/v1/user/post/${postData.id}/`,
-      JSON.stringify(postFormData)
-    );
-    console.log(response);
-    if (response.status == 202) {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      await putApiData(
+        `/blog/api/v1/user/post/${id}/`,
+        JSON.stringify(postFormData)
+      );
+    },
+    onSuccess: () => {
       toast.success("post has been updated successfully");
-      navigate("/posts-management")
-    } else {
-      response.data.detail &&
-        toast.error(`problem updating the post: ${response.data.detail}`);
-      response.data.details &&
-        toast.error(`problem updating the post: ${response.data.details}`);
-    }
-  };
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["post",id] });
+    },
+    onError: (error) => {
+      toast.error(`something went wrong, ${error.message}`);
+    },
+  });
 
   return (
     <>
@@ -70,7 +68,12 @@ const PostsEdit = () => {
         <>
           <h1 className="text-center">Edit Post {postData && postData.id} </h1>
 
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault;
+              mutation.mutate({})
+            }}
+          >
             <div className="form-group">
               <label htmlFor="title">Title</label>
               <input
@@ -117,7 +120,7 @@ const PostsEdit = () => {
             <button type="submit" className="btn btn-primary">
               Save
             </button>
-            <Link className="btn btn-secondary" to="/posts-management" >
+            <Link className="btn btn-secondary" to="/posts-management">
               Cancel
             </Link>
           </form>

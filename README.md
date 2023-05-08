@@ -293,3 +293,52 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 );
 
 ```
+
+in order to do GET requests you would have to use ```useQuery``` with queryFn and queryKey, queryKey indicates what are you going to call this query as the name and what other additional paramaters you want to consider for this data. on the other hand queryFn is going to be the function you want to call based on the job. for example it can be an axios function to fetch data.
+look at the example below to get the idea how to use it in a simple way.
+
+```jsx
+const BlogList = () => {
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchBlogList,
+  })
+
+  if (isLoading) {
+    return <span>Loading...</span>
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
+
+  // We can assume by this point that `isSuccess === true`
+  return (
+    <ul>
+      {data.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+```
+for POST/PUT/PATCH requests your going to need ```useMutation``` this function will help you create a call to api and change 
+
+```jsx
+
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+const queryClient = useQueryClient()
+
+// When this mutation succeeds, invalidate any queries with the `posts` or `reminders` query key
+const mutation = useMutation({
+  mutationFn: addPost,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['posts'] })
+  },
+})
+
+//usage
+<button onClick={() => {mutation.mutate()}}>
+
+```

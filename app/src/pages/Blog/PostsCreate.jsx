@@ -1,40 +1,36 @@
 import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate,Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { postApiData } from "../../utils/api";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const PostsCreate = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
-
+  const mutation = useMutation({
+    mutationFn: async () => {
+      await postApiData(
+        `/blog/api/v1/user/post/`,
+        JSON.stringify(postFormData)
+      );
+    },
+    onSuccess: () => {
+      toast.success("post has been created successfully");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      navigate("/posts-management");
+    },
+    onError: (error) => {
+      toast.error(`something went wrong, ${error.message}`);
+    },
+  });
   const [postFormData, setPostFormData] = useState({
     title: "",
     content: "",
     is_published: false,
   });
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await postApiData(
-      `/blog/api/v1/user/post/`,
-      JSON.stringify(postFormData)
-    );
-    console.log(response);
-    if (response.status == 201) {
-      toast.success("post has been created successfully");
-      navigate("/posts-management")
-    } else {
-      response.data.detail &&
-        toast.error(`problem updating the post: ${response.data.detail}`);
-      response.data.details &&
-        toast.error(`problem updating the post: ${response.data.details}`);
-    }
-  };
 
   return (
     <>
@@ -43,7 +39,13 @@ const PostsCreate = () => {
         <>
           <h1 className="text-center">Create Post </h1>
 
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log("test");
+              mutation.mutate({});
+            }}
+          >
             <div className="form-group">
               <label htmlFor="title">Title</label>
               <input
@@ -75,7 +77,6 @@ const PostsCreate = () => {
                 className="form-check-input"
                 id="is_published"
                 name="is_published"
-            
                 onChange={(e) =>
                   setPostFormData({
                     ...postFormData,
@@ -90,7 +91,7 @@ const PostsCreate = () => {
             <button type="submit" className="btn btn-primary">
               Save
             </button>
-            <Link className="btn btn-secondary" to="/posts-management" >
+            <Link className="btn btn-secondary" to="/posts-management">
               Cancel
             </Link>
           </form>
@@ -102,8 +103,3 @@ const PostsCreate = () => {
 };
 
 export default PostsCreate;
-
-
-
-
-
