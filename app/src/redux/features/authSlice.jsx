@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { setAuthToken,unSetAuthToken } from "../../utils/api";
 const userDataStr = localStorage.getItem("userData");
 const userData = JSON.parse(userDataStr);
 
@@ -26,7 +26,7 @@ const authSlice = createSlice({
         refresh_token: state.refresh_token,
         email: state.email,
       });
-
+      setAuthToken(state.access_token)
       localStorage.setItem("userData", userData);
     },
     logout: (state) => {
@@ -35,7 +35,7 @@ const authSlice = createSlice({
       state.access_token = null;
       state.refresh_token = null;
       state.email = null;
-      localStorage.removeItem("userData");
+      unSetAuthToken()
     },
   },
 });
@@ -43,3 +43,7 @@ const authSlice = createSlice({
 export const { login, logout } = authSlice.actions;
 
 export default authSlice.reducer;
+
+export const selectCurrentUser = (state) => state.auth.email
+export const selectAccessToken = (state) => state.auth.access_token
+export const selectRefreshToken = (state) => state.auth.refresh_token
