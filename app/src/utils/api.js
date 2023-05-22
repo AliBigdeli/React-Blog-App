@@ -14,18 +14,18 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    
-      if ( error.response && error.response.status === 401) {
-        // Handle 401 errors here
-        getRefreshedToken();
-      }
-    
+    if (error.response && error.response.status === 401) {
+      // Handle 401 errors here
+      getRefreshedToken();
+    }
+
     return Promise.reject(error);
   }
 );
 
 // function to make GET requests using the api object
 export const getRefreshedToken = async () => {
+  if (!localStorage.getItem("userData")) return;
   let user_data = JSON.parse(localStorage.getItem("userData"));
   let data = {
     refresh_token: user_data.refresh_token,

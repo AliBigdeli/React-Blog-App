@@ -43,7 +43,7 @@ const PostsCreate = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            console.log("test");
+            // console.log("test");
             mutation.mutate({});
           }}
           className="form-container"

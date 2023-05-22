@@ -19,7 +19,7 @@ const BlogDetail = () => {
     },
     retry: false,
     onError: (error) => {
-      console.log("test");
+      // console.log("test");
       if (error.response?.status === 404 || error.response?.status === 422) {
         navigate("/page-404");
         return false;
