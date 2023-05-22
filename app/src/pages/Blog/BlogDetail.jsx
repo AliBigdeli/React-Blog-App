@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getApiData } from "../../utils/api";
+import Spinner from "../../components/Spinner/Spinner";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -28,7 +29,7 @@ const BlogDetail = () => {
   return (
     <>
       <Header />
-      {isLoading && <h1>loading</h1>}
+      {isLoading && <Spinner/>}
       {/* {isError && <h1>{error.message}</h1>} */}
 
       {data && (

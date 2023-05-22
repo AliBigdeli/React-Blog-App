@@ -1,17 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { setAuthToken,unSetAuthToken } from "../../utils/api";
-const userDataStr = localStorage.getItem("userData");
-const userData = JSON.parse(userDataStr);
+import { setAuthToken, unSetAuthToken } from "../../utils/api";
+
+const getInitialData = () => {
+  const userDataStr = localStorage.getItem("userData");
+
+  if (userDataStr) {
+    const userData = JSON.parse(userDataStr);
+    setAuthToken(userData.access_token);
+    return userData;
+  } else {
+    return {
+      isAuthenticated: false,
+      user_id: null,
+      access_token: null,
+      refresh_token: null,
+      email: null,
+    };
+  }
+};
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: userData || {
-    isAuthenticated: false,
-    user_id: null,
-    access_token: null,
-    refresh_token: null,
-    email: null,
-  },
+  initialState: getInitialData(),
   reducers: {
     login: (state, action) => {
       state.isAuthenticated = true;
@@ -26,7 +36,7 @@ const authSlice = createSlice({
         refresh_token: state.refresh_token,
         email: state.email,
       });
-      setAuthToken(state.access_token)
+      setAuthToken(state.access_token);
       localStorage.setItem("userData", userData);
     },
     logout: (state) => {
@@ -35,7 +45,7 @@ const authSlice = createSlice({
       state.access_token = null;
       state.refresh_token = null;
       state.email = null;
-      unSetAuthToken()
+      unSetAuthToken();
     },
   },
 });
@@ -44,6 +54,6 @@ export const { login, logout } = authSlice.actions;
 
 export default authSlice.reducer;
 
-export const selectCurrentUser = (state) => state.auth.email
-export const selectAccessToken = (state) => state.auth.access_token
-export const selectRefreshToken = (state) => state.auth.refresh_token
+export const selectCurrentUser = (state) => state.auth.email;
+export const selectAccessToken = (state) => state.auth.access_token;
+export const selectRefreshToken = (state) => state.auth.refresh_token;

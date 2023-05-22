@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import Spinner from "../../components/Spinner/Spinner";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { postApiData } from "../../utils/api";
@@ -36,66 +37,68 @@ const PostsCreate = () => {
     <>
       <Header />
       <div className="container">
-        <>
-          <h1 className="text-center">Create Post </h1>
+        {mutation.isLoading && <Spinner />}
+        <h1 className="text-center">Create Post </h1>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log("test");
-              mutation.mutate({});
-            }}
-          >
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                className="form-control"
-                id="title"
-                name="title"
-                value={postFormData.title}
-                onChange={(e) =>
-                  setPostFormData({ ...postFormData, title: e.target.value })
-                }
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="content">Content</label>
-              <textarea
-                className="form-control"
-                id="content"
-                name="content"
-                value={postFormData.content}
-                onChange={(e) =>
-                  setPostFormData({ ...postFormData, content: e.target.value })
-                }
-              />
-            </div>
-            <div className="form-group form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="is_published"
-                name="is_published"
-                onChange={(e) =>
-                  setPostFormData({
-                    ...postFormData,
-                    is_published: e.target.checked,
-                  })
-                }
-              />
-              <label className="form-check-label" htmlFor="is_published">
-                Publish
-              </label>
-            </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log("test");
+            mutation.mutate({});
+          }}
+          className="form-container"
+        >
+          <div className="form-group">
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              className="form-control"
+              id="title"
+              name="title"
+              value={postFormData.title}
+              onChange={(e) =>
+                setPostFormData({ ...postFormData, title: e.target.value })
+              }
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="content">Content</label>
+            <textarea
+              className="form-control"
+              id="content"
+              name="content"
+              value={postFormData.content}
+              onChange={(e) =>
+                setPostFormData({ ...postFormData, content: e.target.value })
+              }
+            />
+          </div>
+          <div className="form-group form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="is_published"
+              name="is_published"
+              onChange={(e) =>
+                setPostFormData({
+                  ...postFormData,
+                  is_published: e.target.checked,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="is_published">
+              Publish
+            </label>
+          </div>
+          <div className="form-group py-5">
             <button type="submit" className="btn btn-primary">
               Save
             </button>
             <Link className="btn btn-secondary" to="/posts-management">
               Cancel
             </Link>
-          </form>
-        </>
+          </div>
+        </form>
       </div>
       <Footer />
     </>

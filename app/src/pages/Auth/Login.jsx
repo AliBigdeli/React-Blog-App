@@ -5,13 +5,14 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {login} from "../../redux/features/authSlice";
-import {api} from "../../utils/api";
+import { login } from "../../redux/features/authSlice";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postApiData } from "../../utils/api";
+import Spinner from "../../components/Spinner/Spinner";
 
 const authService = {
-
   login: async (email, password) => {
-    const response = await api.post("/accounts/api/v1/user/login/", {
+    const response = await postApiData("/accounts/api/v1/user/login/", {
       email: email,
       password: password,
     });
@@ -25,33 +26,38 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const loginRequest = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await authService.login(email, password);
-      response.data &&
-        dispatch(
-          login({
-            user_id: response.data.user_id,
-            access_token: response.data.access_token,
-            refresh_token: response.data.refresh_token,
-            email: email,
-          })
-        );
-      response.data?.email &&
-        toast.success(`successfully logged in as ${response.data.email}`);
+  const mutation = useMutation({
+    mutationFn: async () => {
+      return await authService.login(email, password);
+    },
+    onSuccess: (response) => {
+      dispatch(
+        login({
+          user_id: response.data.user_id,
+          access_token: response.data.access_token,
+          refresh_token: response.data.refresh_token,
+          email: email,
+        })
+      );
+      toast.success(`successfully logged in as ${response.data.email}`);
       navigate("/");
-    } catch (error) {
-      console.log(error);
+    },
+    onError: (error) => {
       error.response.data?.detail && toast.error(error.response.data.detail);
       error.response.data?.details && toast.error(error.response.data.details);
-    }
-  };
+    },
+  });
 
   return (
     <div className="auth-container">
+      {mutation.isLoading && <Spinner/>}
       <main className="form-auth w-100 m-auto">
-        <form onSubmit={loginRequest}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            mutation.mutate({});
+          }}
+        >
           <img className="mb-4" src={logo} alt="" width="100" height="100" />
           <h1 className="h3 mb-3 fw-normal">Login Form</h1>
 

@@ -4,39 +4,44 @@ import "./Auth.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../utils/api";
+import { postApiData } from "../../utils/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Spinner from "../../components/Spinner/Spinner";
 
 const Register = () => {
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password1, setPassword1] = useState("");
-
-  const registerRequest = (e) => {
-    e.preventDefault();
-    api
-      .post("/accounts/api/v1/user/register/", {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      return await postApiData("/accounts/api/v1/user/register/", {
         email: email,
         password: password,
         password1: password1,
-      })
-      .then((response) => {
-        console.log(response);
-        toast.success(response.data.detail);
-        navigate("/login");
-      })
-      .catch((err) => {
-        console.log(err);
-        err.response.data.detail && toast.error(err.response.data.detail);
-        err.response.data.details && toast.error(err.response.data.details);
       });
-  };
+    },
+    onSuccess: (response) => {
+      toast.success(response.data.detail);
+      navigate("/login");
+    },
+    onError: (error) => {
+      error.response.data.detail && toast.error(error.response.data.detail);
+      error.response.data.details && toast.error(error.response.data.details);
+    },
+  });
 
   return (
     <div className="auth-container">
+      {mutation.isLoading && <Spinner />}
       <main className="form-auth w-100 m-auto">
-        <form onSubmit={registerRequest}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            mutation.mutate({});
+          }}
+        >
           <img className="mb-4" src={logo} alt="" width="100" height="100" />
           <h1 className="h3 mb-3 fw-normal">Registration Form</h1>
 

@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import Spinner from "../../components/Spinner/Spinner";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -25,9 +26,9 @@ const PostsEdit = () => {
       const response = await getApiData(`/blog/api/v1/user/post/${id}/`);
       return response;
     },
-    retry: false,
+    retry: true,
     onError: (error) => {
-      console.log("test");
+      // console.log("test");
       if (error.response?.status === 404 || error.response?.status === 422) {
         navigate("/page-404");
         return false;
@@ -54,7 +55,7 @@ const PostsEdit = () => {
     onSuccess: () => {
       toast.success("post has been updated successfully");
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.invalidateQueries({ queryKey: ["post",id] });
+      queryClient.invalidateQueries({ queryKey: ["post", id] });
     },
     onError: (error) => {
       toast.error(`something went wrong, ${error.message}`);
@@ -65,66 +66,71 @@ const PostsEdit = () => {
     <>
       <Header />
       <div className="container">
-        <>
-          <h1 className="text-center">Edit Post {postData && postData.id} </h1>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault;
-              mutation.mutate({})
-            }}
-          >
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                className="form-control"
-                id="title"
-                name="title"
-                value={postFormData.title}
-                onChange={(e) =>
-                  setPostFormData({ ...postFormData, title: e.target.value })
-                }
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="content">Content</label>
-              <textarea
-                className="form-control"
-                id="content"
-                name="content"
-                value={postFormData.content}
-                onChange={(e) =>
-                  setPostFormData({ ...postFormData, content: e.target.value })
-                }
-              />
-            </div>
-            <div className="form-group form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="is_published"
-                name="is_published"
-                checked={postFormData.is_published}
-                onChange={(e) =>
-                  setPostFormData({
-                    ...postFormData,
-                    is_published: e.target.checked,
-                  })
-                }
-              />
-              <label className="form-check-label" htmlFor="is_published">
-                Publish
-              </label>
-            </div>
+        {isLoading && <Spinner />}
+        {mutation.isLoading && <Spinner />}
+        <h1 className="text-center">Edit Post {postData && postData.id} </h1>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            mutation.mutate({});
+          }}
+          className="form-container"
+        >
+          <div className="form-group">
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              className="form-control"
+              id="title"
+              name="title"
+              value={postFormData.title}
+              onChange={(e) =>
+                setPostFormData({ ...postFormData, title: e.target.value })
+              }
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="content">Content</label>
+            <textarea
+              className="form-control"
+              id="content"
+              name="content"
+              value={postFormData.content}
+              onChange={(e) =>
+                setPostFormData({
+                  ...postFormData,
+                  content: e.target.value,
+                })
+              }
+            />
+          </div>
+          <div className="form-group form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="is_published"
+              name="is_published"
+              checked={postFormData.is_published}
+              onChange={(e) =>
+                setPostFormData({
+                  ...postFormData,
+                  is_published: e.target.checked,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="is_published">
+              Publish
+            </label>
+          </div>
+          <div className="form-group py-5">
             <button type="submit" className="btn btn-primary">
               Save
             </button>
             <Link className="btn btn-secondary" to="/posts-management">
               Cancel
             </Link>
-          </form>
-        </>
+          </div>
+        </form>
       </div>
       <Footer />
     </>

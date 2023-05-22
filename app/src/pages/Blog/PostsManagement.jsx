@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import Spinner from "../../components/Spinner/Spinner";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getApiData } from "../../utils/api";
@@ -90,7 +91,7 @@ const BlogList = () => {
           </Link>
         </div>
         <div className="row mb-2">
-          {isLoading && <h5>loading...</h5>}
+          {isLoading && <Spinner/>}
           {isError && <h5>{error.message}</h5>}
           <table className="table table-striped">
             <thead>

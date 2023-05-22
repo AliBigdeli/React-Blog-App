@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import Spinner from "../../components/Spinner/Spinner";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -16,14 +17,9 @@ const BlogList = () => {
   const [total_items, setTotalItems] = useState(0);
   const [page_size, setPageSize] = useState(5);
 
-  const {
-    isLoading,
-    isError,
-    error,
-    data,
-  } = useQuery({
+  const { isLoading, isError, error, data } = useQuery({
     queryKey: ["posts", page, page_size, order, search],
-    keepPreviousData : true,
+    keepPreviousData: true,
     queryFn: async () => {
       let params = {
         ordering: order,
@@ -83,7 +79,7 @@ const BlogList = () => {
           </select>
         </div>
         <div className="row mb-2">
-          {isLoading && <h5>loading...</h5>}
+          {isLoading && <Spinner />}
           {isError && <h5>{error.message}</h5>}
           {data &&
             data.data.results.map((blog) => (
