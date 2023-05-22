@@ -4,6 +4,7 @@ import { Button, Modal } from "react-bootstrap";
 import { deleteApiData } from "../../utils/api";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Spinner from "../Spinner/Spinner";
 
 const RemoveModal = (props) => {
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +28,7 @@ const RemoveModal = (props) => {
   //   console.log(blog);
   return (
     <>
+      {mutation.isLoading && <Spinner />}
       <button className="btn" onClick={() => setShowModal(true)}>
         <i className="bi bi-trash-fill text-danger"></i>
       </button>
@@ -49,7 +51,7 @@ const RemoveModal = (props) => {
             variant="danger"
             onClick={(e) => {
               e.preventDefault();
-              mutation.mutate({})
+              mutation.mutate({});
             }}
           >
             Remove Item
