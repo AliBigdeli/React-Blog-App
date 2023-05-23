@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { getApiData, putApiData } from "../../utils/api";
 import { toast } from "react-toastify";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import TextEditor from "../../components/TextEditor/TextEditor";
 
 const PostsEdit = () => {
   const { id } = useParams();
@@ -61,6 +62,12 @@ const PostsEdit = () => {
       toast.error(`something went wrong, ${error.message}`);
     },
   });
+  const handleEditorChange = (name, value) => {
+    setPostFormData({
+      ...postFormData,
+      [name]: value,
+    });
+  };
 
   return (
     <>
@@ -90,7 +97,7 @@ const PostsEdit = () => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="content">Content</label>
+            {/* <label htmlFor="content">Content</label>
             <textarea
               className="form-control"
               id="content"
@@ -102,6 +109,11 @@ const PostsEdit = () => {
                   content: e.target.value,
                 })
               }
+            /> */}
+            <TextEditor
+              name="content"
+              value={postFormData.content}
+              onChange={handleEditorChange}
             />
           </div>
           <div className="form-group form-check">

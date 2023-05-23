@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getApiData } from "../../utils/api";
 import Spinner from "../../components/Spinner/Spinner";
+import "react-quill/dist/quill.snow.css";
+import "highlight.js/styles/default.css";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -35,7 +37,8 @@ const BlogDetail = () => {
       {data && (
         <div className="container">
           <h1>{data.data.title}</h1>
-          <p>{data.data.content}</p>
+          <span dangerouslySetInnerHTML={{ __html: data.data.content }} />
+          {/* <p>{data.data.content}</p> */}
         </div>
       )}
       <Footer />

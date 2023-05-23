@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { postApiData } from "../../utils/api";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import TextEditor from "../../components/TextEditor/TextEditor";
 
 const PostsCreate = () => {
   const queryClient = useQueryClient();
@@ -32,6 +33,13 @@ const PostsCreate = () => {
     content: "",
     is_published: false,
   });
+
+  const handleEditorChange = (name, value) => {
+    setPostFormData({
+      ...postFormData,
+      [name]: value,
+    });
+  };
 
   return (
     <>
@@ -63,7 +71,7 @@ const PostsCreate = () => {
           </div>
           <div className="form-group">
             <label htmlFor="content">Content</label>
-            <textarea
+            {/* <textarea
               className="form-control"
               id="content"
               name="content"
@@ -71,6 +79,11 @@ const PostsCreate = () => {
               onChange={(e) =>
                 setPostFormData({ ...postFormData, content: e.target.value })
               }
+            /> */}
+            <TextEditor
+              name="content"
+              value={postFormData.content}
+              onChange={handleEditorChange}
             />
           </div>
           <div className="form-group form-check">
