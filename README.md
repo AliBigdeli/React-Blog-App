@@ -30,7 +30,7 @@
 
 
 # Demo
-<img loading="lazy" style="width:700px" src="./docs/demo.gif">
+<img loading="lazy" style="width:100%" src="./docs/demo.gif">
 
 # Setup Project
 keep that in mind that this project uses another repo as its backend which has been written with fastapi and python with basic authentication and blog app. which you can find it in the link bellow:
