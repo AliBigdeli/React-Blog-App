@@ -1,12 +1,16 @@
 <h1 align="center">React Resume Setup</h1>
 <h3 align="center">A Guideline to create react resume</h3>
 <p align="center">
-<a href="https://www.python.org" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> </a>
+<a href="https://nodejs.org/en/" target="_blank"> <img src="https://seeklogo.com/images/N/nodejs-logo-FBE122E377-seeklogo.com.png" alt="nodejs" width="40" height="40"/> </a>
+<a href="https://reactjs.org/" target="_blank"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2300px-React-icon.svg.png" alt="react" width="40" height="35"/> </a>
+<a href="https://tanstack.com/query/latest/" target="_blank"> <img src="https://img.stackshare.io/service/25599/default_c6db7125f2c663e452ba211df91b2ced3bb7f0ff.png" alt="react" width="40" height="35"/> </a>
+<a href="https://redux.js.org/" target="_blank"> <img src="https://d33wubrfki0l68.cloudfront.net/45ed46a4aa7300c35494e9fc23ff4c1f61f62ab7/b7c39/static/redux_logo_2-24410881e63c96340db17ec232dfd1bf.png" alt="react" width="80" height="35"/> </a>
 
 </p>
     
 # Guideline
 - [Guideline](#guideline)
+- [Demo](#demo)
 - [Setup Project](#setup-project)
   - [Install nodejs](#install-nodejs)
   - [Install Vite and Setup project](#install-vite-and-setup-project)
@@ -24,7 +28,14 @@
 - [Redux](#redux)
 - [React-Query](#react-query)
 
+
+# Demo
+
+
 # Setup Project
+keep that in mind that this project uses another repo as its backend which has been written with fastapi and python with basic authentication and blog app. which you can find it in the link bellow:
+
+- <https://github.com/AliBigdeli/FastApi-Blog-Authentication-App>
 
 ## Install nodejs
 in order to setup a project you need to have npm and node installed first:

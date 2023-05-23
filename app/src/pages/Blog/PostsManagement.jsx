@@ -65,7 +65,7 @@ const BlogList = () => {
             className="form-select mw-100"
             onChange={(e) => setOrder(e.target.value)}
           >
-            <option defaultValue value="">
+            <option defaultValue value="id">
               OrderBy (default)
             </option>
             <option value="id">ID Ascending</option>
@@ -75,7 +75,7 @@ const BlogList = () => {
             className="form-select mw-100"
             onChange={(e) => setPageSize(e.target.value)}
           >
-            <option defaultValue value="5">
+            <option defaultValue value={page_size}>
               page size (default)
             </option>
             <option value="5">5</option>
