@@ -1,5 +1,5 @@
-<h1 align="center">React Resume Setup</h1>
-<h3 align="center">A Guideline to create react resume</h3>
+<h1 align="center">React Blog App</h1>
+<h3 align="center">A Simple blog app as an exercise for base crud usage of react and jwt authentications with state manager and react query</h3>
 <p align="center">
 <a href="https://nodejs.org/en/" target="_blank"> <img src="https://seeklogo.com/images/N/nodejs-logo-FBE122E377-seeklogo.com.png" alt="nodejs" width="40" height="40"/> </a>
 <a href="https://reactjs.org/" target="_blank"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2300px-React-icon.svg.png" alt="react" width="40" height="35"/> </a>
@@ -30,7 +30,7 @@
 
 
 # Demo
-
+<img loading="lazy" style="width:700px" src="./docs/demo.gif">
 
 # Setup Project
 keep that in mind that this project uses another repo as its backend which has been written with fastapi and python with basic authentication and blog app. which you can find it in the link bellow:
