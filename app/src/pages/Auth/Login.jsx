@@ -50,7 +50,7 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-      {mutation.isLoading && <Spinner/>}
+      {mutation.isLoading && <Spinner />}
       <main className="form-auth w-100 m-auto">
         <form
           onSubmit={(e) => {

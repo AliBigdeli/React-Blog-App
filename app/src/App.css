@@ -22,5 +22,41 @@ textarea {
 }
 
 .form-group {
-    padding-top: 20px;
+  padding-top: 20px;
+}
+/* Add this to your CSS file */
+
+.dark-theme {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-theme .featurette-heading {
+  color: #ffffff;
+}
+
+.dark-theme .text-muted {
+  color: #bbbbbb;
+}
+
+.dark-theme img {
+  filter: brightness(0.8);
+}
+
+.dark-theme .btn-primary {
+  background-color: #1f1f1f;
+  border-color: #444444;
+}
+
+.dark-theme .btn-primary:hover {
+  background-color: #444444;
+  border-color: #666666;
+}
+.btn-primary {
+  display: flex;
+  align-items: center;
+}
+
+.btn-primary svg {
+  margin-right: 8px;
 }
